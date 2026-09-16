@@ -33,7 +33,7 @@
     margin: 0 auto;
     height: 100vh;
     height: 100dvh;
-    padding: 31px 16px 21px;
+    padding: 31px 22px 21px;
     display: flex;
     flex-direction: column;
   }
@@ -58,12 +58,12 @@
     align-items: center;
     justify-content: center;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .logo-word-img {
     display: none;
-    height: 51px;
+    height: 43px;
     width: auto;
   }
 
@@ -80,16 +80,16 @@
 
   /* --- Заголовок рецепта --- */
   h1 {
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 0 4px;
     line-height: 1.3;
   }
 
   .subtitle {
     font-size: 14px;
     color: var(--gray);
-    margin: 0 0 10px;
+    margin: 0 0 7px;
   }
 
   .more-link {
@@ -114,14 +114,14 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    margin-bottom: 32px;
+    margin-bottom: 29px;
   }
 
   .field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 7px 0;
     border-bottom: 1px solid var(--line);
   }
 
@@ -156,7 +156,7 @@
   .results-title {
     font-size: 13px;
     color: var(--gray);
-    margin: 0 0 12px;
+    margin: 0 0 8px;
   }
 
   .results {
@@ -167,7 +167,7 @@
   .row {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 7px 0;
     border-bottom: 1px solid var(--line);
     font-size: 15px;
   }
@@ -176,16 +176,40 @@
     font-weight: 600;
   }
 
+  .oil-note {
+    font-size: 15px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .oil-checkbox {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    accent-color: var(--blue);
+  }
+
   .page-footer {
     text-align: center;
-    padding-top: 20px;
+    padding-top: 14px;
   }
 
   .footer-line1 {
     font-size: 13px;
     font-weight: 400;
     color: var(--white);
-    margin: 0 0 4px;
+    margin: 0 0 3px;
   }
 
   .footer-line2 {
@@ -201,7 +225,7 @@
     font-weight: 400;
     color: var(--blue);
     text-decoration: none;
-    margin-top: 4px;
+    margin-top: 3px;
     cursor: pointer;
     background: none;
     border: none;
@@ -306,6 +330,18 @@
       </div>
       <span id="totalOut" style="display:none;"></span>
     </div>
+  </div>
+
+  <p class="results-title" style="margin-top:29px;">масло для приготовления 5 гр на 250 гр фарша</p>
+  <div class="results">
+    <label class="checkbox-row">
+      <input type="checkbox" class="oil-checkbox">
+      <span>рапсовое рафинированное масло</span>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" class="oil-checkbox">
+      <span>топлёное масло</span>
+    </label>
   </div>
 
   <footer class="page-footer">
