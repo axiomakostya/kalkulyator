@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фарш из куриной грудки — пищевая ценность</title>
+<style>
+  :root {
+    --bg: #1A1A1A;
+    --white: #FAFAFA;
+    --gray: #9A9A9A;
+    --line: rgba(250, 250, 250, 0.16);
+    --blue: #3074FC;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+    height: 100vh;
+    height: 100dvh;
+    padding: 31px 16px 21px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    flex-shrink: 0;
+  }
+
+  .page-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* --- Логотип --- */
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .logo-word-img {
+    display: none;
+    height: 51px;
+    width: auto;
+  }
+
+  .logo-word-img.visible {
+    display: block;
+  }
+
+  .logo-text {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--white);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .arrow-left {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 7px solid currentColor;
+  }
+
+  .group-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 0 0 12px;
+  }
+
+  .group-title-row .group-title {
+    margin: 0;
+  }
+
+  .group-title {
+    font-size: 13px;
+    color: var(--gray);
+    margin: 28px 0 12px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+
+  .row .value {
+    font-weight: 600;
+  }
+
+  .page-footer {
+    text-align: center;
+    padding-top: 20px;
+  }
+
+  .footer-line1 {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0 0 4px;
+  }
+
+  .footer-line2 {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0;
+  }
+
+  .footer-line3 {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--blue);
+    text-decoration: none;
+    margin-top: 4px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* --- Полноэкранное окно --- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal-content {
+    position: relative;
+    width: 260px;
+    min-height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-size: 22px;
+    font-weight: 200;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .modal-text {
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <div class="logo-wrap">
+      <img src="logo-word.png" alt="Axioma" class="logo-word-img" id="logoWordImg">
+      <div class="logo-text" id="logoText">Axioma</div>
+    </div>
+
+    <div class="group-title-row">
+      <span class="group-title">Энергия и макронутриенты</span>
+      <a href="index.html" class="back-link">назад</a>
+    </div>
+  </div>
+
+  <div class="page-scroll">
+    <div class="results">
+      <div class="row"><span>Калории, ккал</span><span class="value" id="out_calories">—</span></div>
+      <div class="row"><span>Белки, г</span><span class="value" id="out_protein">—</span></div>
+      <div class="row"><span>Жиры, г</span><span class="value" id="out_fat">—</span></div>
+      <div class="row"><span>Углеводы, г</span><span class="value" id="out_carbs">—</span></div>
+      <div class="row"><span>Клетчатка, г</span><span class="value" id="out_fiber">—</span></div>
+    </div>
+
+    <p class="group-title">Жиры подробно</p>
+    <div class="results">
+      <div class="row"><span>Насыщенный жир, г</span><span class="value" id="out_satfat">—</span></div>
+      <div class="row"><span>Мононенасыщенный жир, г</span><span class="value" id="out_monofat">—</span></div>
+      <div class="row"><span>Полиненасыщенный жир, г</span><span class="value" id="out_polyfat">—</span></div>
+    </div>
+
+    <p class="group-title">Минералы</p>
+    <div class="results">
+      <div class="row"><span>Натрий, мг</span><span class="value" id="out_sodium">—</span></div>
+      <div class="row"><span>Калий, мг</span><span class="value" id="out_potassium">—</span></div>
+      <div class="row"><span>Магний, мг</span><span class="value" id="out_magnesium">—</span></div>
+      <div class="row"><span>Фосфор, мг</span><span class="value" id="out_phosphorus">—</span></div>
+      <div class="row"><span>Кальций, мг</span><span class="value" id="out_calcium">—</span></div>
+      <div class="row"><span>Железо, мг</span><span class="value" id="out_iron">—</span></div>
+      <div class="row"><span>Цинк, мг</span><span class="value" id="out_zinc">—</span></div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <p class="footer-line1">Ваше здоровье и внешний вид</p>
+    <p class="footer-line2">до 60% зависят от того, что Вы едите</p>
+    <button type="button" class="footer-line3" id="menuLink">добавить в меню на завтра</button>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
+    <p class="modal-text">Калькулятор вашего здоровья<br>будет представлен позже</p>
+  </div>
+</div>
+
+<script>
+  // Значения даны из расчёта на 100 г готового фарша
+  const PER_100 = {
+    calories:    { value: 100.3 },
+    protein:     { value: 19.9  },
+    fat:         { value: 1.7   },
+    carbs:       { value: 1.6   },
+    fiber:       { value: 0.07  },
+    satfat:      { value: 0.31  },
+    monofat:     { value: 0.33  },
+    polyfat:     { value: 0.28  },
+    sodium:      { value: 462   },
+    potassium:   { value: 294.5 },
+    magnesium:   { value: 23    },
+    phosphorus:  { value: 190   },
+    calcium:     { value: 5.07  },
+    iron:        { value: 0.36  },
+    zinc:        { value: 0.59  }
+  };
+
+  function fmt(n) {
+    return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+  }
+
+  const logoWordImg = document.getElementById('logoWordImg');
+  const logoText = document.getElementById('logoText');
+  logoWordImg.addEventListener('load', () => {
+    logoWordImg.classList.add('visible');
+    logoText.style.display = 'none';
+  });
+  logoWordImg.addEventListener('error', () => {
+    logoWordImg.style.display = 'none';
+  });
+
+  function render(total) {
+    for (const key in PER_100) {
+      const { value } = PER_100[key];
+      const el = document.getElementById('out_' + key);
+      if (el) el.textContent = fmt(value * total / 100);
+    }
+  }
+
+  // Берём вес готового фарша из ссылки (передаётся с главной страницы),
+  // если его нет — используем значение по умолчанию
+  const params = new URLSearchParams(window.location.search);
+  const initialTotal = parseFloat(params.get('total')) || 570.5;
+  render(initialTotal);
+
+  // Модальное окно "добавить в меню на завтра"
+  const modalOverlay = document.getElementById('modalOverlay');
+  const menuLink = document.getElementById('menuLink');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal() { modalOverlay.classList.add('open'); }
+  function closeModal() { modalOverlay.classList.remove('open'); }
+
+  menuLink.addEventListener('click', openModal);
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>

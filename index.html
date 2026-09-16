@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фарш из куриной грудки — калькулятор</title>
+<style>
+  :root {
+    --bg: #1A1A1A;
+    --white: #FAFAFA;
+    --gray: #9A9A9A;
+    --line: rgba(250, 250, 250, 0.16);
+    --blue: #3074FC;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+    height: 100vh;
+    height: 100dvh;
+    padding: 31px 16px 21px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    flex-shrink: 0;
+  }
+
+  .page-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .page-footer {
+    flex-shrink: 0;
+  }
+
+  /* --- Логотип --- */
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .logo-word-img {
+    display: none;
+    height: 51px;
+    width: auto;
+  }
+
+  .logo-word-img.visible {
+    display: block;
+  }
+
+  .logo-text {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--white);
+  }
+
+  /* --- Заголовок рецепта --- */
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    line-height: 1.3;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--gray);
+    margin: 0 0 10px;
+  }
+
+  .more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  .arrow-right {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid currentColor;
+  }
+
+  /* --- Блок ввода --- */
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 32px;
+  }
+
+  .field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .field input {
+    width: 110px;
+    text-align: right;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--blue);
+    border: none;
+    padding: 4px 0;
+    background: transparent;
+    -moz-appearance: textfield;
+  }
+
+  .field input::-webkit-outer-spin-button,
+  .field input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .field input:focus {
+    outline: none;
+  }
+
+  /* --- Результат --- */
+  .results-title {
+    font-size: 13px;
+    color: var(--gray);
+    margin: 0 0 12px;
+  }
+
+  .results {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+
+  .row .value {
+    font-weight: 600;
+  }
+
+  .page-footer {
+    text-align: center;
+    padding-top: 20px;
+  }
+
+  .footer-line1 {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0 0 4px;
+  }
+
+  .footer-line2 {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0;
+  }
+
+  .footer-line3 {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--blue);
+    text-decoration: none;
+    margin-top: 4px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* --- Полноэкранное окно --- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal-content {
+    position: relative;
+    width: 260px;
+    min-height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-size: 22px;
+    font-weight: 200;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .modal-text {
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <div class="logo-wrap">
+      <!-- Вариант А: как только рядом с этим файлом появится logo-word.png,
+           он подхватится автоматически, а текстовый логотип скроется -->
+      <img src="logo-word.png" alt="Axioma" class="logo-word-img" id="logoWordImg">
+      <!-- Вариант Б: временный текстовый логотип -->
+      <div class="logo-text" id="logoText">Axioma</div>
+    </div>
+
+    <h1>Фарш из куриной грудки</h1>
+    <p class="subtitle"><span id="macrosOut">белок ~ 20 г, жиры ~ 1,5 г, углеводы ~ 1,5 г</span> <a href="details.html" id="moreLink" class="more-link">ещё</a></p>
+
+    <div class="inputs">
+      <div class="field">
+        <label for="totalInput">Вес готового фарша, г</label>
+        <input type="number" id="totalInput" inputmode="decimal" step="1">
+      </div>
+      <div class="field">
+        <label for="breastInput">Вес грудки, г</label>
+        <input type="number" id="breastInput" inputmode="decimal" step="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="page-scroll">
+    <p class="results-title">Остальные ингредиенты</p>
+    <div class="results">
+      <div class="row">
+        <span>Вода ледяная, г</span>
+        <span class="value" id="waterOut">—</span>
+      </div>
+      <div class="row">
+        <span>Соль мелкая морская, г</span>
+        <span class="value" id="saltOut">—</span>
+      </div>
+      <div class="row">
+        <span>Крахмал тапиоковый, г</span>
+        <span class="value" id="starchOut">—</span>
+      </div>
+      <div class="row">
+        <span>Белая мисо паста, г</span>
+        <span class="value" id="misoOut">—</span>
+      </div>
+      <span id="totalOut" style="display:none;"></span>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <p class="footer-line1">Ваше здоровье и внешний вид</p>
+    <p class="footer-line2">до 60% зависят от того, что Вы едите</p>
+    <button type="button" class="footer-line3" id="menuLink">добавить в меню на завтра</button>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
+    <p class="modal-text">Калькулятор вашего здоровья<br>будет представлен позже</p>
+  </div>
+</div>
+
+<script>
+  // Пропорции считаются от веса грудки
+  const RATIO_WATER  = 0.10;
+  const RATIO_SALT   = 0.011;
+  const RATIO_STARCH = 0.015;
+  const RATIO_MISO   = 0.015;
+  const TOTAL_FACTOR = 1 + RATIO_WATER + RATIO_SALT + RATIO_STARCH + RATIO_MISO;
+
+  // БЖУ на 100 г готового фарша
+  const PROTEIN_PER_100 = 19.9;
+  const FAT_PER_100     = 1.7;
+  const CARBS_PER_100   = 1.6;
+
+  const totalInput  = document.getElementById('totalInput');
+  const breastInput = document.getElementById('breastInput');
+
+  const waterOut  = document.getElementById('waterOut');
+  const saltOut   = document.getElementById('saltOut');
+  const starchOut = document.getElementById('starchOut');
+  const misoOut   = document.getElementById('misoOut');
+  const totalOut  = document.getElementById('totalOut');
+  const macrosOut = document.getElementById('macrosOut');
+  const moreLink  = document.getElementById('moreLink');
+
+  function fmt(n) {
+    return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' г';
+  }
+
+  function fmtNum(n) {
+    return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+  }
+
+  // Пересчитать всё, отталкиваясь от веса грудки
+  function renderFromBreast(breast) {
+    const water  = breast * RATIO_WATER;
+    const salt   = breast * RATIO_SALT;
+    const starch = breast * RATIO_STARCH;
+    const miso   = breast * RATIO_MISO;
+    const total  = breast * TOTAL_FACTOR;
+
+    waterOut.textContent  = fmtNum(water);
+    saltOut.textContent   = fmtNum(salt);
+    starchOut.textContent = fmtNum(starch);
+    misoOut.textContent   = fmtNum(miso);
+    totalOut.textContent  = fmt(total);
+
+    const protein = total * PROTEIN_PER_100 / 100;
+    const fat     = total * FAT_PER_100 / 100;
+    const carbs   = total * CARBS_PER_100 / 100;
+    macrosOut.textContent = `белок ~ ${fmt(protein)}, жиры ~ ${fmt(fat)}, углеводы ~ ${fmt(carbs)}`;
+    moreLink.href = `details.html?total=${Math.round(total * 10) / 10}`;
+
+    return total;
+  }
+
+  // Выделяем текущее значение при клике/фокусе, чтобы новое можно было сразу вписать.
+  // Safari сбрасывает выделение сразу после клика, поэтому select() откладываем
+  // на следующий тик и дополнительно гасим стандартное поведение mouseup.
+  function selectOnFocus(e) {
+    const el = e.target;
+    setTimeout(() => el.select(), 0);
+  }
+  function preventMouseupReset(e) {
+    if (document.activeElement === e.target) {
+      e.preventDefault();
+    }
+  }
+  [totalInput, breastInput].forEach((el) => {
+    el.addEventListener('focus', selectOnFocus);
+    el.addEventListener('mouseup', preventMouseupReset);
+  });
+
+  // Подтверждение изменения: по клавише Enter или при уходе курсора из поля (blur)
+  function confirmTotal() {
+    const total = parseFloat(totalInput.value.replace(',', '.'));
+    if (!total || total <= 0) return;
+    const breast = total / TOTAL_FACTOR;
+    breastInput.value = Math.round(breast * 10) / 10;
+    totalInput.value = Math.round(total);
+    renderFromBreast(breast);
+  }
+
+  function confirmBreast() {
+    const breast = parseFloat(breastInput.value.replace(',', '.'));
+    if (!breast || breast <= 0) return;
+    breastInput.value = Math.round(breast * 10) / 10;
+    const total = renderFromBreast(breast);
+    totalInput.value = Math.round(total);
+  }
+
+  totalInput.addEventListener('blur', confirmTotal);
+  breastInput.addEventListener('blur', confirmBreast);
+
+  totalInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); totalInput.blur(); }
+  });
+  breastInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); breastInput.blur(); }
+  });
+
+  // Значения по умолчанию — рецепт как есть
+  const defaultBreast = 500;
+  breastInput.value = defaultBreast;
+  const defaultTotal = renderFromBreast(defaultBreast);
+  totalInput.value = Math.round(defaultTotal);
+
+  // Логика подмены логотипа: показываем текст, пока не загрузится картинка со словом
+  const logoWordImg = document.getElementById('logoWordImg');
+  const logoText = document.getElementById('logoText');
+  logoWordImg.addEventListener('load', () => {
+    logoWordImg.classList.add('visible');
+    logoText.style.display = 'none';
+  });
+  logoWordImg.addEventListener('error', () => {
+    logoWordImg.style.display = 'none';
+  });
+
+  // Модальное окно "добавить в меню на завтра"
+  const modalOverlay = document.getElementById('modalOverlay');
+  const menuLink = document.getElementById('menuLink');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal() { modalOverlay.classList.add('open'); }
+  function closeModal() { modalOverlay.classList.remove('open'); }
+
+  menuLink.addEventListener('click', openModal);
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>
