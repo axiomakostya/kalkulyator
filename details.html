@@ -224,6 +224,7 @@
       <div class="row"><span>Белки, г</span><span class="value" id="out_protein">—</span></div>
       <div class="row"><span>Жиры, г</span><span class="value" id="out_fat">—</span></div>
       <div class="row"><span>Углеводы, г</span><span class="value" id="out_carbs">—</span></div>
+      <div class="row"><span>Сахар, г</span><span class="value" id="out_sugar">—</span></div>
       <div class="row"><span>Клетчатка, г</span><span class="value" id="out_fiber">—</span></div>
     </div>
 
@@ -232,6 +233,7 @@
       <div class="row"><span>Насыщенный жир, г</span><span class="value" id="out_satfat">—</span></div>
       <div class="row"><span>Мононенасыщенный жир, г</span><span class="value" id="out_monofat">—</span></div>
       <div class="row"><span>Полиненасыщенный жир, г</span><span class="value" id="out_polyfat">—</span></div>
+      <div class="row"><span>Трансжиры, г</span><span class="value" id="out_transfat">—</span></div>
     </div>
 
     <p class="group-title">Минералы</p>
@@ -267,10 +269,12 @@
     protein:     { value: 19.9  },
     fat:         { value: 1.7   },
     carbs:       { value: 1.6   },
+    sugar:       { value: 0     },
     fiber:       { value: 0.07  },
     satfat:      { value: 0.31  },
     monofat:     { value: 0.33  },
     polyfat:     { value: 0.28  },
+    transfat:    { value: 0     },
     sodium:      { value: 462   },
     potassium:   { value: 294.5 },
     magnesium:   { value: 23    },
@@ -279,6 +283,21 @@
     iron:        { value: 0.36  },
     zinc:        { value: 0.59  }
   };
+
+  // Значения масла — из расчёта на 100 г масла (SR Legacy)
+  const OIL_PER_100 = {
+    canola: {
+      calories: 884, protein: 0, fat: 100, carbs: 0, sugar: 0, fiber: 0,
+      satfat: 7.4, monofat: 63.3, polyfat: 28.1, transfat: 0.4,
+      sodium: 0, potassium: 0, magnesium: 0, phosphorus: 0,
+      calcium: 0, iron: 0, zinc: 0
+    }
+  };
+
+  // 5 г масла на каждые начатые 250 г фарша (0-250 → 5 г, 250-500 → 10 г, и т.д.)
+  function oilGramsFor(total) {
+    return Math.ceil(total / 250) * 5;
+  }
 
   function fmt(n) {
     return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
@@ -294,19 +313,27 @@
     logoWordImg.style.display = 'none';
   });
 
-  function render(total) {
+  function render(total, oilKey) {
+    const oil = OIL_PER_100[oilKey];
+    const oilG = oil ? oilGramsFor(total) : 0;
+
     for (const key in PER_100) {
       const { value } = PER_100[key];
+      let amount = value * total / 100;
+      if (oil && key in oil) {
+        amount += oil[key] * oilG / 100;
+      }
       const el = document.getElementById('out_' + key);
-      if (el) el.textContent = fmt(value * total / 100);
+      if (el) el.textContent = fmt(amount);
     }
   }
 
-  // Берём вес готового фарша из ссылки (передаётся с главной страницы),
-  // если его нет — используем значение по умолчанию
+  // Берём вес готового фарша и выбранное масло из ссылки (передаются с главной страницы),
+  // если веса нет — используем значение по умолчанию
   const params = new URLSearchParams(window.location.search);
   const initialTotal = parseFloat(params.get('total')) || 570.5;
-  render(initialTotal);
+  const initialOil = params.get('oil');
+  render(initialTotal, initialOil);
 
   // Модальное окно "добавить в меню на завтра"
   const modalOverlay = document.getElementById('modalOverlay');
