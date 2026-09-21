@@ -33,7 +33,7 @@
     margin: 0 auto;
     height: 100vh;
     height: 100dvh;
-    padding: 31px 16px 21px;
+    padding: 31px 22px 21px;
     display: flex;
     flex-direction: column;
   }
@@ -54,12 +54,12 @@
     align-items: center;
     justify-content: center;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .logo-word-img {
     display: none;
-    height: 51px;
+    height: 43px;
     width: auto;
   }
 
@@ -92,6 +92,48 @@
     border-right: 7px solid currentColor;
   }
 
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 29px;
+  }
+
+  .field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .field input {
+    width: 110px;
+    text-align: right;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--blue);
+    border: none;
+    padding: 4px 0;
+    background: transparent;
+    -moz-appearance: textfield;
+  }
+
+  .field input::-webkit-outer-spin-button,
+  .field input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .field input:focus {
+    outline: none;
+  }
+
   .group-title-row {
     display: flex;
     justify-content: space-between;
@@ -112,7 +154,7 @@
   .row {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 7px 0;
     border-bottom: 1px solid var(--line);
     font-size: 15px;
   }
@@ -121,16 +163,75 @@
     font-weight: 600;
   }
 
+  .results-title {
+    font-size: 13px;
+    color: var(--gray);
+    margin: 0 0 8px;
+  }
+
+  .oil-note {
+    font-size: 15px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .oil-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .checkbox-box {
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    align-self: center;
+    border: 1px solid var(--white);
+    box-sizing: border-box;
+  }
+
+  .oil-checkbox:checked + .checkbox-box {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+
+  .oil-checkbox:checked + .checkbox-box::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: -1px;
+    width: 3px;
+    height: 5px;
+    border: solid var(--white);
+    border-width: 0 1px 1px 0;
+    transform: rotate(45deg);
+  }
+
   .page-footer {
     text-align: center;
-    padding-top: 20px;
+    padding-top: 14px;
   }
 
   .footer-line1 {
     font-size: 13px;
     font-weight: 400;
     color: var(--white);
-    margin: 0 0 4px;
+    margin: 0 0 3px;
   }
 
   .footer-line2 {
@@ -146,7 +247,7 @@
     font-weight: 400;
     color: var(--blue);
     text-decoration: none;
-    margin-top: 4px;
+    margin-top: 3px;
     cursor: pointer;
     background: none;
     border: none;
@@ -154,13 +255,15 @@
     font-family: inherit;
   }
 
-  /* --- Полноэкранное окно --- */
+  /* --- Нижний лист действий (в стиле iOS action sheet) --- */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 26, 0.5);
-    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    align-items: flex-end;
     justify-content: center;
     z-index: 1000;
   }
@@ -169,37 +272,71 @@
     display: flex;
   }
 
-  .modal-content {
-    position: relative;
-    width: 260px;
-    min-height: 96px;
+  .sheet {
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+    padding: 0 8px calc(8px + env(safe-area-inset-bottom, 0px));
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
+    flex-direction: column;
+    gap: 8px;
+    animation: sheet-up 0.22s ease-out;
   }
 
-  .modal-close {
-    position: absolute;
-    top: -14px;
-    right: -14px;
+  @keyframes sheet-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .sheet-group {
+    background: rgba(250, 250, 250, 0.08);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sheet-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
     background: none;
     border: none;
+    border-bottom: 1px solid rgba(250, 250, 250, 0.15);
     color: var(--blue);
-    font-size: 22px;
-    font-weight: 200;
-    line-height: 1;
+    font-size: 17px;
+    font-family: inherit;
     cursor: pointer;
-    padding: 4px;
+    text-align: center;
   }
 
-  .modal-text {
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.6;
-    text-align: center;
-    margin: 0;
+  .sheet-btn:last-child {
+    border-bottom: none;
+  }
+
+  .sheet-btn:active {
+    background: rgba(250, 250, 250, 0.12);
+  }
+
+  .sheet-cancel {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(250, 250, 250, 0.08);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    border: none;
+    padding: 16px;
+    color: var(--gray);
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .sheet-cancel:active {
+    background: rgba(250, 250, 250, 0.12);
   }
 </style>
 </head>
@@ -210,6 +347,17 @@
     <div class="logo-wrap">
       <img src="logo-word.png" alt="Axioma" class="logo-word-img" id="logoWordImg">
       <div class="logo-text" id="logoText">Axioma</div>
+    </div>
+
+    <div class="inputs">
+      <div class="field">
+        <label for="totalInput">Вес готового фарша, г</label>
+        <input type="number" id="totalInput" inputmode="decimal" step="1">
+      </div>
+      <div class="field">
+        <label for="breastInput">Вес грудки, г</label>
+        <input type="number" id="breastInput" inputmode="decimal" step="1">
+      </div>
     </div>
 
     <div class="group-title-row">
@@ -248,17 +396,53 @@
     </div>
   </div>
 
+  <p class="results-title" style="margin-top:29px;">Масло для приготовления 5 гр на 250 гр фарша</p>
+  <div class="results">
+    <label class="checkbox-row">
+      <input type="checkbox" class="oil-checkbox" id="oilCanola">
+      <span class="checkbox-box"></span>
+      <span>рапсовое рафинированное масло</span>
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" class="oil-checkbox" id="oilGhee">
+      <span class="checkbox-box"></span>
+      <span>топлёное масло</span>
+    </label>
+  </div>
+
   <footer class="page-footer">
-    <p class="footer-line1">Ваше здоровье и внешний вид</p>
-    <p class="footer-line2">до 60% зависят от того, что Вы едите</p>
     <button type="button" class="footer-line3" id="menuLink">добавить в меню на завтра</button>
   </footer>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal-content">
-    <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
-    <p class="modal-text">Калькулятор вашего здоровья<br>будет представлен позже</p>
+  <div class="sheet" id="sheetMain">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="lunch">на обед</button>
+      <button type="button" class="sheet-btn" data-action="dinner">на ужин</button>
+      <button type="button" class="sheet-btn" data-action="recipe">в рецепт</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="modalClose">отмена</button>
+  </div>
+
+  <div class="sheet" id="sheetLunch" style="display:none;">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="lunch-again">ещё на обед</button>
+      <button type="button" class="sheet-btn" data-action="add-breakfast">добавить на завтрак</button>
+      <button type="button" class="sheet-btn" data-action="add-dinner">добавить на ужин</button>
+      <button type="button" class="sheet-btn" data-action="menu-done">меню на завтра готово</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="lunchBack">назад</button>
+  </div>
+
+  <div class="sheet" id="sheetDinner" style="display:none;">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="dinner-again">ещё на ужин</button>
+      <button type="button" class="sheet-btn" data-action="dinner-add-breakfast">добавить на завтрак</button>
+      <button type="button" class="sheet-btn" data-action="dinner-add-lunch">добавить на обед</button>
+      <button type="button" class="sheet-btn" data-action="dinner-menu-done">меню на завтра готово</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="dinnerBack">назад</button>
   </div>
 </div>
 
@@ -291,6 +475,13 @@
       satfat: 7.4, monofat: 63.3, polyfat: 28.1, transfat: 0.4,
       sodium: 0, potassium: 0, magnesium: 0, phosphorus: 0,
       calcium: 0, iron: 0, zinc: 0
+    },
+    ghee: {
+      calories: 876, protein: 0.28, fat: 99.48, carbs: 0, sugar: 0, fiber: 0,
+      satfat: 61.9, monofat: 28.7, polyfat: 3.7,
+      // трансжиры у топлёного масла не измерялись (нет данных) — не прибавляем
+      sodium: 2, potassium: 4.9, magnesium: 0, phosphorus: 2.9,
+      calcium: 4, iron: 0, zinc: 0
     }
   };
 
@@ -298,6 +489,89 @@
   function oilGramsFor(total) {
     return Math.ceil(total / 250) * 5;
   }
+
+  // Пропорции рецепта (для пересчёта между весом грудки и весом готового фарша)
+  const RATIO_WATER  = 0.10;
+  const RATIO_SALT   = 0.011;
+  const RATIO_STARCH = 0.015;
+  const RATIO_MISO   = 0.015;
+  const TOTAL_FACTOR = 1 + RATIO_WATER + RATIO_SALT + RATIO_STARCH + RATIO_MISO;
+
+  const STORAGE_KEY_BREAST = 'axioma_farsh_breast';
+  const STORAGE_KEY_OIL    = 'axioma_farsh_oil';
+
+  const totalInput  = document.getElementById('totalInput');
+  const breastInput = document.getElementById('breastInput');
+  const oilCanola   = document.getElementById('oilCanola');
+  const oilGhee     = document.getElementById('oilGhee');
+
+  let currentTotal = 0;
+  let currentOilKey = null;
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY_BREAST, String(breastInput.value));
+      if (currentOilKey) {
+        localStorage.setItem(STORAGE_KEY_OIL, currentOilKey);
+      } else {
+        localStorage.removeItem(STORAGE_KEY_OIL);
+      }
+    } catch (e) { /* localStorage недоступен — просто не сохраняем */ }
+  }
+
+  function renderFromBreast(breast) {
+    const total = breast * TOTAL_FACTOR;
+    currentTotal = total;
+    render(total, currentOilKey);
+    return total;
+  }
+
+  // Масла взаимоисключающие — в рецепте используется только один вид масла
+  oilCanola.addEventListener('change', () => {
+    if (oilCanola.checked) { oilGhee.checked = false; currentOilKey = 'canola'; }
+    else { currentOilKey = null; }
+    render(currentTotal, currentOilKey);
+    saveState();
+  });
+  oilGhee.addEventListener('change', () => {
+    if (oilGhee.checked) { oilCanola.checked = false; currentOilKey = 'ghee'; }
+    else { currentOilKey = null; }
+    render(currentTotal, currentOilKey);
+    saveState();
+  });
+
+  function confirmTotal() {
+    const total = parseFloat(totalInput.value.replace(',', '.'));
+    if (!total || total <= 0) return;
+    const breast = total / TOTAL_FACTOR;
+    breastInput.value = Math.round(breast * 10) / 10;
+    totalInput.value = Math.round(total);
+    renderFromBreast(breast);
+    saveState();
+  }
+
+  function confirmBreast() {
+    const breast = parseFloat(breastInput.value.replace(',', '.'));
+    if (!breast || breast <= 0) return;
+    breastInput.value = Math.round(breast * 10) / 10;
+    const total = renderFromBreast(breast);
+    totalInput.value = Math.round(total);
+    saveState();
+  }
+
+  [totalInput, breastInput].forEach((el) => {
+    el.addEventListener('focus', (e) => {
+      setTimeout(() => e.target.select(), 0);
+    });
+    el.addEventListener('mouseup', (e) => {
+      if (document.activeElement === e.target) e.preventDefault();
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+    });
+  });
+  totalInput.addEventListener('blur', confirmTotal);
+  breastInput.addEventListener('blur', confirmBreast);
 
   function fmt(n) {
     return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
@@ -328,23 +602,75 @@
     }
   }
 
-  // Берём вес готового фарша и выбранное масло из ссылки (передаются с главной страницы),
-  // если веса нет — используем значение по умолчанию
+  // Берём вес готового фарша и выбранное масло: сначала из ссылки (если пришли с главной
+  // страницы только что), иначе — из сохранённого состояния, иначе — значение по умолчанию
   const params = new URLSearchParams(window.location.search);
-  const initialTotal = parseFloat(params.get('total')) || 570.5;
-  const initialOil = params.get('oil');
-  render(initialTotal, initialOil);
 
-  // Модальное окно "добавить в меню на завтра"
+  let initialTotal = parseFloat(params.get('total'));
+  let initialOil = params.get('oil');
+
+  if (!initialTotal || initialTotal <= 0) {
+    try {
+      const savedBreast = parseFloat(localStorage.getItem(STORAGE_KEY_BREAST));
+      if (savedBreast > 0) initialTotal = savedBreast * TOTAL_FACTOR;
+    } catch (e) { /* localStorage недоступен */ }
+  }
+  if (!initialOil) {
+    try {
+      initialOil = localStorage.getItem(STORAGE_KEY_OIL);
+    } catch (e) { /* localStorage недоступен */ }
+  }
+  if (!initialTotal || initialTotal <= 0) initialTotal = 570.5;
+
+  currentOilKey = initialOil || null;
+  if (currentOilKey === 'canola') oilCanola.checked = true;
+  else if (currentOilKey === 'ghee') oilGhee.checked = true;
+  const initialBreast = initialTotal / TOTAL_FACTOR;
+  breastInput.value = Math.round(initialBreast * 10) / 10;
+  totalInput.value = Math.round(initialTotal);
+  renderFromBreast(initialBreast);
+  saveState();
+
+  // Нижний лист действий "добавить в меню на завтра"
   const modalOverlay = document.getElementById('modalOverlay');
   const menuLink = document.getElementById('menuLink');
   const modalClose = document.getElementById('modalClose');
+  const sheetMain = document.getElementById('sheetMain');
+  const sheetLunch = document.getElementById('sheetLunch');
+  const sheetDinner = document.getElementById('sheetDinner');
+  const lunchBack = document.getElementById('lunchBack');
+  const dinnerBack = document.getElementById('dinnerBack');
 
-  function openModal() { modalOverlay.classList.add('open'); }
-  function closeModal() { modalOverlay.classList.remove('open'); }
+  function showSheet(el) {
+    sheetMain.style.display = 'none';
+    sheetLunch.style.display = 'none';
+    sheetDinner.style.display = 'none';
+    el.style.display = 'flex';
+  }
+
+  function openModal() {
+    showSheet(sheetMain);
+    modalOverlay.classList.add('open');
+  }
+  function closeModal() {
+    modalOverlay.classList.remove('open');
+  }
 
   menuLink.addEventListener('click', openModal);
   modalClose.addEventListener('click', closeModal);
+  lunchBack.addEventListener('click', () => showSheet(sheetMain));
+  dinnerBack.addEventListener('click', () => showSheet(sheetMain));
+
+  sheetMain.querySelector('[data-action="lunch"]').addEventListener('click', () => showSheet(sheetLunch));
+  sheetMain.querySelector('[data-action="dinner"]').addEventListener('click', () => showSheet(sheetDinner));
+  sheetMain.querySelector('[data-action="recipe"]').addEventListener('click', closeModal);
+  sheetLunch.querySelectorAll('.sheet-btn').forEach((btn) => {
+    btn.addEventListener('click', closeModal);
+  });
+  sheetDinner.querySelectorAll('.sheet-btn').forEach((btn) => {
+    btn.addEventListener('click', closeModal);
+  });
+
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
