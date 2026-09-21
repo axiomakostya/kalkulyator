@@ -262,13 +262,15 @@
     font-family: inherit;
   }
 
-  /* --- Полноэкранное окно --- */
+  /* --- Нижний лист действий (в стиле iOS action sheet) --- */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 26, 0.5);
-    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    align-items: flex-end;
     justify-content: center;
     z-index: 1000;
   }
@@ -277,37 +279,71 @@
     display: flex;
   }
 
-  .modal-content {
-    position: relative;
-    width: 260px;
-    min-height: 96px;
+  .sheet {
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+    padding: 0 8px calc(8px + env(safe-area-inset-bottom, 0px));
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
+    flex-direction: column;
+    gap: 8px;
+    animation: sheet-up 0.22s ease-out;
   }
 
-  .modal-close {
-    position: absolute;
-    top: -14px;
-    right: -14px;
+  @keyframes sheet-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .sheet-group {
+    background: rgba(250, 250, 250, 0.08);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sheet-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
     background: none;
     border: none;
+    border-bottom: 1px solid rgba(250, 250, 250, 0.15);
     color: var(--blue);
-    font-size: 22px;
-    font-weight: 200;
-    line-height: 1;
+    font-size: 17px;
+    font-family: inherit;
     cursor: pointer;
-    padding: 4px;
+    text-align: center;
   }
 
-  .modal-text {
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.6;
-    text-align: center;
-    margin: 0;
+  .sheet-btn:last-child {
+    border-bottom: none;
+  }
+
+  .sheet-btn:active {
+    background: rgba(250, 250, 250, 0.12);
+  }
+
+  .sheet-cancel {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(250, 250, 250, 0.08);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    border: none;
+    padding: 16px;
+    color: var(--gray);
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .sheet-cancel:active {
+    background: rgba(250, 250, 250, 0.12);
   }
 </style>
 </head>
@@ -383,9 +419,33 @@
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal-content">
-    <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
-    <p class="modal-text">Калькулятор вашего здоровья<br>будет представлен позже</p>
+  <div class="sheet" id="sheetMain">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="lunch">на обед</button>
+      <button type="button" class="sheet-btn" data-action="dinner">на ужин</button>
+      <button type="button" class="sheet-btn" data-action="recipe">в рецепт</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="modalClose">отмена</button>
+  </div>
+
+  <div class="sheet" id="sheetLunch" style="display:none;">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="lunch-again">ещё на обед</button>
+      <button type="button" class="sheet-btn" data-action="add-breakfast">добавить на завтрак</button>
+      <button type="button" class="sheet-btn" data-action="add-dinner">добавить на ужин</button>
+      <button type="button" class="sheet-btn" data-action="menu-done">меню на завтра готово</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="lunchBack">назад</button>
+  </div>
+
+  <div class="sheet" id="sheetDinner" style="display:none;">
+    <div class="sheet-group">
+      <button type="button" class="sheet-btn" data-action="dinner-again">ещё на ужин</button>
+      <button type="button" class="sheet-btn" data-action="dinner-add-breakfast">добавить на завтрак</button>
+      <button type="button" class="sheet-btn" data-action="dinner-add-lunch">добавить на обед</button>
+      <button type="button" class="sheet-btn" data-action="dinner-menu-done">меню на завтра готово</button>
+    </div>
+    <button type="button" class="sheet-cancel" id="dinnerBack">назад</button>
   </div>
 </div>
 
@@ -404,7 +464,8 @@
 
   // БЖУ масла на 100 г масла (SR Legacy)
   const OIL_MACROS = {
-    canola: { protein: 0, fat: 100, carbs: 0 }
+    canola: { protein: 0,    fat: 100,   carbs: 0 },
+    ghee:   { protein: 0.28, fat: 99.48, carbs: 0 }
   };
 
   // 5 г масла на каждые начатые 250 г фарша
@@ -428,10 +489,25 @@
   const DETAILS_URL = 'details.html';
   let currentTotal = 0;
 
+  // Масла взаимоисключающие — в рецепте используется только один вид масла
+  function activeOilKey() {
+    if (oilCanola.checked) return 'canola';
+    if (oilGhee.checked) return 'ghee';
+    return null;
+  }
+
+  oilCanola.addEventListener('change', () => {
+    if (oilCanola.checked) oilGhee.checked = false;
+  });
+  oilGhee.addEventListener('change', () => {
+    if (oilGhee.checked) oilCanola.checked = false;
+  });
+
   function updateMoreLink() {
     const params = new URLSearchParams();
     params.set('total', Math.round(currentTotal * 10) / 10);
-    if (oilCanola.checked) params.set('oil', 'canola');
+    const oilKey = activeOilKey();
+    if (oilKey) params.set('oil', oilKey);
     moreLink.href = `${DETAILS_URL}?${params.toString()}`;
   }
 
@@ -440,15 +516,16 @@
     let fat     = currentTotal * FAT_PER_100 / 100;
     let carbs   = currentTotal * CARBS_PER_100 / 100;
 
-    if (oilCanola.checked) {
+    const oilKey = activeOilKey();
+    if (oilKey) {
       const oilG = oilGramsFor(currentTotal);
-      const oil = OIL_MACROS.canola;
+      const oil = OIL_MACROS[oilKey];
       protein += oil.protein * oilG / 100;
       fat     += oil.fat * oilG / 100;
       carbs   += oil.carbs * oilG / 100;
     }
 
-    macrosOut.textContent = `белок ~ ${fmt(protein)}, жиры ~ ${fmt(fat)}, углеводы ~ ${fmt(carbs)}`;
+    macrosOut.textContent = `белок ~ ${fmtInt(protein)}, жиры ~ ${fmtInt(fat)}, углеводы ~ ${fmtInt(carbs)}`;
   }
 
   oilCanola.addEventListener('change', () => { renderMacros(); updateMoreLink(); });
@@ -456,6 +533,10 @@
 
   function fmt(n) {
     return n.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' г';
+  }
+
+  function fmtInt(n) {
+    return Math.round(n).toLocaleString('ru-RU') + ' г';
   }
 
   function fmtNum(n) {
@@ -508,6 +589,7 @@
     breastInput.value = Math.round(breast * 10) / 10;
     totalInput.value = Math.round(total);
     renderFromBreast(breast);
+    saveState();
   }
 
   function confirmBreast() {
@@ -516,6 +598,7 @@
     breastInput.value = Math.round(breast * 10) / 10;
     const total = renderFromBreast(breast);
     totalInput.value = Math.round(total);
+    saveState();
   }
 
   totalInput.addEventListener('blur', confirmTotal);
@@ -528,8 +611,37 @@
     if (e.key === 'Enter') { e.preventDefault(); breastInput.blur(); }
   });
 
-  // Значения по умолчанию — рецепт как есть
-  const defaultBreast = 500;
+  // Запоминаем введённые данные, чтобы они не сбрасывались при возврате со страницы деталей
+  const STORAGE_KEY_BREAST = 'axioma_farsh_breast';
+  const STORAGE_KEY_OIL    = 'axioma_farsh_oil';
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY_BREAST, String(breastInput.value));
+      const oilKey = activeOilKey();
+      if (oilKey) {
+        localStorage.setItem(STORAGE_KEY_OIL, oilKey);
+      } else {
+        localStorage.removeItem(STORAGE_KEY_OIL);
+      }
+    } catch (e) { /* localStorage недоступен — просто не сохраняем */ }
+  }
+
+  oilCanola.addEventListener('change', saveState);
+  oilGhee.addEventListener('change', saveState);
+
+  // Вес грудки по умолчанию (500 г) — только при самом первом визите.
+  // При возврате на страницу используем то, что пользователь вводил раньше.
+  let defaultBreast = 500;
+  try {
+    const savedOil = localStorage.getItem(STORAGE_KEY_OIL);
+    if (savedOil === 'canola') oilCanola.checked = true;
+    else if (savedOil === 'ghee') oilGhee.checked = true;
+
+    const savedBreast = parseFloat(localStorage.getItem(STORAGE_KEY_BREAST));
+    if (savedBreast > 0) defaultBreast = savedBreast;
+  } catch (e) { /* localStorage недоступен — используем значение по умолчанию */ }
+
   breastInput.value = defaultBreast;
   const defaultTotal = renderFromBreast(defaultBreast);
   totalInput.value = Math.round(defaultTotal);
@@ -545,16 +657,46 @@
     logoWordImg.style.display = 'none';
   });
 
-  // Модальное окно "добавить в меню на завтра"
+  // Нижний лист действий "добавить в меню на завтра"
   const modalOverlay = document.getElementById('modalOverlay');
   const menuLink = document.getElementById('menuLink');
   const modalClose = document.getElementById('modalClose');
+  const sheetMain = document.getElementById('sheetMain');
+  const sheetLunch = document.getElementById('sheetLunch');
+  const sheetDinner = document.getElementById('sheetDinner');
+  const lunchBack = document.getElementById('lunchBack');
+  const dinnerBack = document.getElementById('dinnerBack');
 
-  function openModal() { modalOverlay.classList.add('open'); }
-  function closeModal() { modalOverlay.classList.remove('open'); }
+  function showSheet(el) {
+    sheetMain.style.display = 'none';
+    sheetLunch.style.display = 'none';
+    sheetDinner.style.display = 'none';
+    el.style.display = 'flex';
+  }
+
+  function openModal() {
+    showSheet(sheetMain);
+    modalOverlay.classList.add('open');
+  }
+  function closeModal() {
+    modalOverlay.classList.remove('open');
+  }
 
   menuLink.addEventListener('click', openModal);
   modalClose.addEventListener('click', closeModal);
+  lunchBack.addEventListener('click', () => showSheet(sheetMain));
+  dinnerBack.addEventListener('click', () => showSheet(sheetMain));
+
+  sheetMain.querySelector('[data-action="lunch"]').addEventListener('click', () => showSheet(sheetLunch));
+  sheetMain.querySelector('[data-action="dinner"]').addEventListener('click', () => showSheet(sheetDinner));
+  sheetMain.querySelector('[data-action="recipe"]').addEventListener('click', closeModal);
+  sheetLunch.querySelectorAll('.sheet-btn').forEach((btn) => {
+    btn.addEventListener('click', closeModal);
+  });
+  sheetDinner.querySelectorAll('.sheet-btn').forEach((btn) => {
+    btn.addEventListener('click', closeModal);
+  });
+
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
